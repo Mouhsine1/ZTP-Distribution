@@ -1,0 +1,119 @@
+\begin{lstlisting}[language=Python]
+from cli import configure, execute
+	
+USER="mouhsine"
+PASSWORD="axians"
+ENABLE="axians"
+	
+def config_basique():                       
+	configure(['hostname distrib2-B1-um6p-2020-07-B7'])
+	configure(['username{} privilege 15 password {}'
+	.format(USER,PASSWORD)])
+	configure(['enable secret {}'
+	.format(ENABLE)])
+	configure(['line vty 0 4', 'transport input ssh',
+	 'login local'])
+	configure(['ip domain-name um6p.com'])
+	configure(['crypto key generate rsa'])
+	execute('wr')
+	
+def config_dhcp_vlan():
+	configure([ 
+	'ip dhcp excluded-address 192.168.2.1 192.168.2.5', 
+	'ip dhcp  excluded-address 192.168.3.1 192.168.3.5',
+	'ip dhcp excluded-address 192.168.4.1 192.168.4.5',
+	'ip dhcp excluded-address 192.168.5.1 192.168.5.5'])
+	cli.configurep(['ip dhcp pool vlan2',
+	'network 192.168.2.0 255.255.255.0',
+	'default-router 192.168.2.1',
+	'dns-server 8.8.8.8',
+	'domain-name um6p.com'])
+	cli.configurep(['ip dhcp pool vlan3', 
+	'network 192.168.3.0 255.255.255.0',
+	'default-router 192.168.3.1',
+	'dns-server 8.8.8.8',
+	'domain-name um6p.com'])
+	cli.configurep(['ip dhcp pool vlan4', 
+	'network 192.168.4.0 255.255.255.0',
+	'default-router 192.168.4.1',
+	'dns-server 8.8.8.8',
+	'domain-name um6p.com'])
+	cli.configurep(['ip dhcp pool vlan2',
+	'network 192.168.5.0 255.255.255.0',
+	'default-router 192.168.5.1',
+	'dns-server 8.8.8.8',
+	'domain-name um6p.com'])
+
+def config_vlan():
+	configure(['vlan 2','name Direction'
+	'vlan 3', 'name Chambres'
+	'vlan 4', 'name Voice'
+	'vlan 5', 'name Wifi'])
+	
+def config_spaning_tree():
+	configure(['spanning-tree mode rapid-pvst',
+	'spanning-tree extend system-id',
+	'spanning-tree vlan 2-3 priority 24576',
+	'spanning-tree vlan 4-5 priority 28672'])
+	
+def config_svi():
+	cli.cofigurep(['interface Vlan2',
+	'ip address 192.168.2.2 255.255.255.0',
+	'standby 2 ip 192.168.2.1')]
+	cli.cofigurep(['interface Vlan3',
+	'ip address 192.168.3.2 255.255.255.0',
+	'standby 3 ip 192.168.3.1')]
+	
+	cli.cofigurep(['interface Vlan4',
+	'ip address 192.168.4.2 255.255.255.0',
+	'standby 4 ip 192.168.4.1')]
+	cli.cofigurep(['interface Vlan5',
+	'ip address 192.168.5.2 255.255.255.0',
+	'standby 5 ip 192.168.5.1')]
+	
+def config_addr():
+	cli.configurep(['interface Ethernet0/0', 
+	'no switchport',
+	'ip address 172.16.1.2 255.255.255.0',
+	'duplex full')]
+	cli.configurep(['interface Ethernet0/2',
+	'no switchport',
+	'ip address 192.168.1.1 255.255.255.0',
+	'duplex full')]
+	
+def config_switchport():
+	cli.configurep(['interface Get0/3',
+	'switchport trunk encapsulation dot1q',
+	'switchport mode trunk',
+	'switchport nonegotiate')]
+	cli.configurep(['interface Ge1/0',
+	'switchport trunk encapsulation dot1q',
+	'switchport mode trunk',
+	'switchport nonegotiate')]
+	cli.configurep(['interface Get1/1',
+	'switchport trunk encapsulation dot1q',
+	'switchport mode trunk',
+	'switchport nonegotiate')]
+	cli.configurep(['interface Ge1/2',
+	'switchport trunk encapsulation dot1q',
+	'switchport mode trunk',
+	'switchport nonegotiate')]
+	
+def config_routing():
+	cli.configurep(['router eigrp 1',
+	'network 172.16.1.0 0.0.0.255',
+	'network 192.168.1.0',
+	'network 192.168.2.0',
+	'network 192.168.3.0',
+	'network 192.168.4.0',
+	'network 192.168.5.0')]
+	
+	config_basique()
+	config_dhcp_vlan()
+	config_spaning_tree()
+	config_svi()
+	config_addr()
+	config_switchport()
+	config_routing()
+	config_vlan()
+\end{lstlisting}
