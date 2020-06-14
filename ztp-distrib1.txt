@@ -1,4 +1,4 @@
-\begin{lstlisting}[language=Python]
+
 from cli import configure, execute
 	
 USER="mouhsine"
@@ -108,12 +108,11 @@ def config_routing():
 	'network 192.168.4.0',
 	'network 192.168.5.0')]
 	
-	config_basique()
-	config_dhcp_vlan()
-	config_spaning_tree()
-	config_svi()
-	config_addr()
-	config_switchport()
-	config_routing()
-	config_vlan()
-\end{lstlisting}
+config_basique()
+config_dhcp_vlan()
+config_spaning_tree()
+config_svi()
+config_addr()
+config_switchport()
+config_routing()
+config_vlan()
